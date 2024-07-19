@@ -1,17 +1,19 @@
-import { CategoryModal } from "../../components/Private/Modals/CategoryModal";
 import { ExtraButton } from "../../components/Private/ExtrasButton";
 import { InputDay } from "../../components/Private/InputToDay";
 import { CategoryTable } from "../../components/Private/Tables/CategoryTable";
-import {category_columns, open_modal } from "../../const";
-import { useState } from "react";
+import { open_modal } from "../../const";
 import { NewButton } from "../../components/Private/NewButton";
 import { Sidebar } from "../../components/Private/Sidebar";
+import { useGet } from "../../useGet";
+import { useState } from "react";
 
 export function Category() {
-    const [modal,setModal]=useState(false)
+    const {data,message,setData}=useGet("categories")
+    const [modal,setModal]=useState(0)
+
     const is_Open=()=>{
+        setModal(1)
         open_modal()
-        setModal(true)
     }
 
     return (
@@ -46,11 +48,10 @@ export function Category() {
                         <button className="w-36 filter_active pb-2">All categories <span className="rounded-full p-1 ml-1 bg-gray-900 text-white text-xs">11</span></button>
                     </div>
                 </div>
-                <div className="w-full px-8">
-                    <CategoryTable columns={category_columns} />
+                <div className="w-full h-full px-8">
+                    <CategoryTable category={data} mess={message} acmodal={modal} acSetModal={setModal} acdata={setData}/>
                 </div>
             </div>
-            <CategoryModal title={modal}/>
         </div>
     )
 }

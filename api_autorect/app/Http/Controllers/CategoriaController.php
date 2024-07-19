@@ -12,14 +12,25 @@ class CategoriaController extends Controller
     //
     public function index()
     {
-        $categorie = Categoria::all();
-        if ($categorie->isEmpty()) {
-            return response()->json(['message' => 'No existen registros']);
-        } else {
-            $categorie_data = [
-                'data' => $categorie
+        try {
+            $categorie = Categoria::all();
+            if ($categorie->isEmpty()) {
+                $message = [
+                    'message' => 'No existen registros'
+                ];
+                return response()->json($message);
+            } else {
+                $categorie_data = [
+                    'data' => $categorie,
+                    'message'=>'Los datos han sido cargados perfectamente'
+                ];
+                return response()->json($categorie_data);
+            }
+        } catch (Exception) {
+            $error = [
+                'message' => 'No se logro establecer una conexion con la base de datos'
             ];
-            return response()->json($categorie_data);
+            return response()->json($error);
         }
     }
     public function store(Request $request)
@@ -54,7 +65,7 @@ class CategoriaController extends Controller
         // Devolver la respuesta exitosa
         return response()->json([
             'message' => 'Categoria creada con exito',
-            'categoria'=>$categoria,
+            'categoria' => $categoria,
             'status' => 201
         ], 201);
     }
@@ -62,10 +73,10 @@ class CategoriaController extends Controller
     {
         try {
             $categorie = Categoria::find($id);
-            if(!$categorie){
-                $data=[
-                    'message'=>'No existe la categoria',
-                    'status'=>404
+            if (!$categorie) {
+                $data = [
+                    'message' => 'No existe la categoria',
+                    'status' => 404
                 ];
                 return response()->json($data);
             }
@@ -90,7 +101,8 @@ class CategoriaController extends Controller
                 $categorie->delete();
                 $data = [
                     'message' => 'La categoria fue eliminada correctamente',
-                    'status' => '200'
+                    'categoria'=>$categorie,
+                    'status' => 200
                 ];
                 return response()->json($data, 200);
             } else {
@@ -109,16 +121,17 @@ class CategoriaController extends Controller
             return response()->json($data, 500);
         }
     }
-    public function update($id, Request $request){
-        try{
-            $categorie=Categoria::find($id);
-            if(!$categorie){
-                $data=[
-                    'message'=>'No se pudo encontrar la categoria',
-                    'status'=>404
+    public function update($id, Request $request)
+    {
+        try {
+            $categorie = Categoria::find($id);
+            if (!$categorie) {
+                $data = [
+                    'message' => 'No se pudo encontrar la categoria',
+                    'status' => 404
                 ];
-                return response()->json($data,404);
-            }else{
+                return response()->json($data, 404);
+            } else {
                 $validator = Validator::make($request->all(), [
                     'nombre_categoria' => 'required',
                     'descripcion_categoria' => 'required'
@@ -130,26 +143,25 @@ class CategoriaController extends Controller
                         'status' => 400
                     ];
                     return response()->json($data, 400);
-                }else{
-                    $categorie->nombre_categoria=$request->nombre_categoria;
-                    $categorie->descripcion_categoria=$request->descripcion_categoria;
+                } else {
+                    $categorie->nombre_categoria = $request->nombre_categoria;
+                    $categorie->descripcion_categoria = $request->descripcion_categoria;
                     $categorie->save();
-                    $data=[
-                        'message'=>'Categoria actualizada correctamente',
-                        'categorie'=>$categorie,
-                        'status'=>200
+                    $data = [
+                        'message' => 'Categoria actualizada correctamente',
+                        'categorie' => $categorie,
+                        'status' => 200
                     ];
-                    return response()->json($data,200);
+                    return response()->json($data, 200);
                 }
             }
-        }catch(Exception $e){
-            $data=[
-                'message'=>'Ocurrio un error al momento de actualizar',
-                'error'=>$e->getMessage(),
-                'status'=>500
+        } catch (Exception $e) {
+            $data = [
+                'message' => 'Ocurrio un error al momento de actualizar',
+                'error' => $e->getMessage(),
+                'status' => 500
             ];
-            return response()->json($data,500);
+            return response()->json($data, 500);
         }
-
     }
 }

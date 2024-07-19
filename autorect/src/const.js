@@ -22,7 +22,8 @@ export const data_model=[{ID:1,Model_name:'Yaris',Model_year:'2015',Brand:'Toyot
 
 //Funciones para abrir y cerrar el modal
 import { Modal } from 'flowbite';
-import { useRef } from 'react';
+
+//Funcion para cerrar el modal
 export const close_modal = () => {
     const target = document.getElementById('modal');
     const options = {
@@ -32,7 +33,8 @@ export const close_modal = () => {
     const modal = new Modal(target, options)
     modal.hide();
 }
-export const open_modal = (title) => {
+//Funcion para abrir el modal
+export const open_modal = () => {
     const target = document.getElementById('modal');
     const options = {
         backdrop: 'static',
@@ -41,10 +43,5 @@ export const open_modal = (title) => {
     const modal = new Modal(target, options)
     modal.show();
 }
-export const action_modal=()=>{
-    valor.value=false
-    open_modal()
-}
-export let valor=useRef ;
 //Dirreccion api
 export const API='http://127.0.0.1:8000/api/';
