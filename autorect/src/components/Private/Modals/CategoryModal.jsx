@@ -23,7 +23,7 @@ export function CategoryModal({ state, newdata, id,acState }) {
                                 </svg>
                                 <span className="sr-only">Close modal</span>
                             </button>                        </div>
-                        <CategoryForm setCategories={newdata} dataCategorie={id} state_modal={state} />
+                        <CategoryForm setCategories={newdata} state_modal={state} idCategoria={id} />
                     </div>
                 </div>
             </div>

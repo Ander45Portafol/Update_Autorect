@@ -1,55 +1,48 @@
 import { AddButton } from "../AddButton";
 import { CleanText } from "../CleanButton";
-import { API } from "../../../const";
+import { API, close_modal } from "../../../const";
 import Swal from 'sweetalert2'
 import { useEffect, useState } from "react";
 
 
-export function CategoryForm({ setCategories, dataCategorie, state_modal }) {
+export function CategoryForm({ setCategories, state_modal, idCategoria }) {
     const dataForm = {
-        id:'',
+        id: '',
         nombre_categoria: '',
         descripcion_categoria: ''
     }
 
     const [data, setData] = useState(dataForm)
 
-    const clean = () => {
-        if (state_modal==0) {
-            setData(dataForm)
+    const updateData = async (e, id) => {
+        const data = {
+            nombre_categoria: e.target.nombre_categoria.value,
+            descripcion_categoria: e.target.descripcion_categoria.value
         }
-    }
-    useEffect(() => {
-        clean()
-    }, [state_modal])
-
-
-    const chargeData = async (id_categoria) => {
         try {
-            if (id_categoria) {
-                const response = await fetch(API + 'categories/' + id_categoria, { method: "GET" })
-                if (response.ok) {
-                    const responseData = await response.json()
-                    console.log(responseData)
-                    setData({
-                        id:responseData.categorie.id_categoria,
-                        nombre_categoria: responseData.categorie.nombre_categoria,
-                        descripcion_categoria: responseData.categorie.descripcion_categoria
-                    })
-                }
+            const response = await fetch(API + 'categories/' + id, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) })
+            if (response.ok) {
+                const result = await response.json()
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    title: result.message,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+                close_modal()
+                const dataUpdate=await fetch(API+'categories',{method:'GET'})
+                const responseData = await dataUpdate.json();
+                setCategories(responseData.data)
+                setData(dataForm)
+                e.target.reset();
             }
-        } catch (e) {
-            console.log(e)
+        } catch (error) {
+            console.log(error)
         }
     }
-    useEffect(() => {
-        chargeData(dataCategorie)
-
-    }, [dataCategorie])
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
+    const createData = async (e) => {
         const data = {
             nombre_categoria: e.target.nombre_categoria.value,
             descripcion_categoria: e.target.descripcion_categoria.value
@@ -67,11 +60,44 @@ export function CategoryForm({ setCategories, dataCategorie, state_modal }) {
                     showConfirmButton: false,
                     timer: 3000
                 })
+                close_modal()
+                setData(dataForm)
                 setCategories(prevCategories => [...prevCategories, result.categoria]); // Assuming the response includes the new category
-                e.target.reset();
+                e.target.reset()
             }
         } catch (error) {
             console.log(error)
+        }
+    }
+    const chargeData = async (id_categoria) => {
+        try {
+            if (id_categoria) {
+                const response = await fetch(API + 'categories/' + id_categoria, { method: "GET" })
+                if (response.ok) {
+                    const responseData = await response.json()
+                    setData({
+                        id: responseData.categorie.id_categoria,
+                        nombre_categoria: responseData.categorie.nombre_categoria,
+                        descripcion_categoria: responseData.categorie.descripcion_categoria
+                    })
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    useEffect(() => {
+            chargeData(idCategoria)   
+
+    },[idCategoria])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        if (state_modal == 1) {
+            createData(e)
+        } else if (state_modal == 2) {
+            updateData(e, idCategoria)
         }
     }
 

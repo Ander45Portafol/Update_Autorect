@@ -6,9 +6,7 @@ import { DeleteButton } from "../DeleteButton";
 
 
 export function CategoryTable({ category, mess, acmodal, acSetModal, acdata }) {
-    const [idCategoria,setIdCateoria]=useState()
-
-
+    const [idCategoria,setIdCateoria]=useState(null)
     const update = (id) => {
         setIdCateoria(id)
         open_modal()
@@ -54,7 +52,7 @@ export function CategoryTable({ category, mess, acmodal, acSetModal, acdata }) {
                         ))}
                 </tbody>
             </table>
-            <CategoryModal state={acmodal} newdata={acdata} id={idCategoria} acState={acSetModal} />
+            <CategoryModal state={acmodal} newdata={acdata} id={idCategoria} acState={acSetModal}/>
         </div>
     );
 }
