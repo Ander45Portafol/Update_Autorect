@@ -5,23 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Modelo extends Model
+class Producto extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'id_modelo'; // Nombre de la llave primaria
+    protected $primaryKey = 'id_producto'; // Nombre de la llave primaria
     protected $keyType = 'int'; // Tipo de la llave primaria
-
     protected $fillable=[
+        'id_producto',
+        'nombre_producto',
+        'descripcion_producto',
+        'existencias',
+        'precio_producto',
+        'imagen_principal',
         'id_modelo',
-        'nombre_modelo',
-        'id_marca'
+        'id_categoria',
+        'estado_producto'
     ];
-
     public $timestamps = false; // Deshabilita las marcas de tiempo
 
-
-    public function marca()//Relacion para con la llave foranea de la tabla marca
-    {
-        return $this->belongsTo(Marca::class);
-    }
 }

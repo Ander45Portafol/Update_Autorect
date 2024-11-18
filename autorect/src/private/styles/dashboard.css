@@ -158,6 +158,15 @@
 .icon_menu{
   display: none;
 }
+.tables::-webkit-scrollbar {
+  width: 7px;
+}
+
+.tables::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background: #771d1d;
+}
 @media only screen and (max-width:600px){
   .container_cards{
     display: flex;

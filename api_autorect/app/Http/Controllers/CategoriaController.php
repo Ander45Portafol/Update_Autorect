@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoriaResource;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\Categoria;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CategoriaController extends Controller
 {
@@ -13,155 +19,74 @@ class CategoriaController extends Controller
     public function index()
     {
         try {
-            $categorie = Categoria::all();
-            if ($categorie->isEmpty()) {
-                $message = [
-                    'message' => 'No existen registros'
-                ];
-                return response()->json($message);
-            } else {
-                $categorie_data = [
-                    'data' => $categorie,
-                    'message'=>'Los datos han sido cargados perfectamente'
-                ];
-                return response()->json($categorie_data);
-            }
-        } catch (Exception) {
-            $error = [
-                'message' => 'No se logro establecer una conexion con la base de datos'
-            ];
-            return response()->json($error);
+            $categorie = Categoria::orderBy("nombre_categoria")->get();
+            return ApiResponse::success('Success', 200, CategoriaResource::collection($categorie));
+        } catch (Throwable  $e) {
+
+            return ApiResponse::error('Error',500,$e->getMessage());
         }
     }
     public function store(Request $request)
+    //Validando los datos a ingresar
     {
-        $validator = Validator::make($request->all(), [
-            'nombre_categoria' => 'required',
-            'descripcion_categoria' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            $data = [
-                'message' => 'Error al validar los datos',
-                'error' => $validator->errors(),
-                'status' => 400
-            ];
-            return response()->json($data, 400);
-        }
-        // Crear una nueva categoría
         try {
-            $categoria = Categoria::create([
-                'nombre_categoria' => $request->nombre_categoria,
-                'descripcion_categoria' => $request->descripcion_categoria
+            $request->validate([
+                'nombre_categoria' => 'required|string|unique:categorias',
+                'descripcion_categoria' => 'required|string'
             ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear la categoría',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
+            // Crear una nueva categoría
+            try {
+                $categoria = Categoria::create([
+                    'nombre_categoria' => $request->nombre_categoria,
+                    'descripcion_categoria' => $request->descripcion_categoria
+                ]);
+                return(new CategoriaResource($categoria))->additional([
+                    'message'=>'Categoria creada con exito'
+                ]);
+                //return ApiResponse::success('Categoria creada con exito', 201, CategoriaResource::collection( $categoria));
+            } catch (Exception $e) {
+                return ApiResponse::error('Error al crear la categoria', 500, $e->getMessage());
+            }
+        } catch (ValidationException $ve) {
+            return ApiResponse::error('Error de validacion', 422, $ve->getMessage());
         }
-
-        // Devolver la respuesta exitosa
-        return response()->json([
-            'message' => 'Categoria creada con exito',
-            'categoria' => $categoria,
-            'status' => 201
-        ], 201);
     }
     public function show($id)
     {
         try {
-            $categorie = Categoria::find($id);
-            if (!$categorie) {
-                $data = [
-                    'message' => 'No existe la categoria',
-                    'status' => 404
-                ];
-                return response()->json($data);
-            }
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Error al intentar buscar',
-                'error' => $e->getMessage(),
-                'status' => 404
-            ], 404);
+            $categorie = Categoria::findOrFail($id);
+            return ApiResponse::success('Categoria obtenida correctamente', 200, $categorie);
+        } catch (ModelNotFoundException $me) {
+            return ApiResponse::error('Error al buscar la categoria', 404, $me->getMessage());
         }
-        $data = [
-            'categorie' => $categorie,
-            'status' => 200
-        ];
-        return response()->json($data, 200);
     }
     public function destroy($id)
     {
         try {
-            $categorie = Categoria::find($id);
-            if ($categorie) {
-                $categorie->delete();
-                $data = [
-                    'message' => 'La categoria fue eliminada correctamente',
-                    'categoria'=>$categorie,
-                    'status' => 200
-                ];
-                return response()->json($data, 200);
-            } else {
-                $data = [
-                    'message' => 'No existe la categoria',
-                    'status' => '404'
-                ];
-                return response()->json($data, 404);
-            }
-        } catch (Exception $ex) {
-            $data = [
-                'message' => 'Error al encontrar la categoria',
-                'error' => $ex->getMessage(),
-                'status' => 500
-            ];
-            return response()->json($data, 500);
+            $categorie = Categoria::findOrFail($id);
+            $categorie->delete();
+            return ApiResponse::success('La categoria fue eliminada correctamente', 200, $categorie);
+        } catch (ModelNotFoundException $me) {
+            return ApiResponse::error('Categoria seleccionada no existe', 404, $me->getMessage());
         }
     }
+
     public function update($id, Request $request)
     {
         try {
-            $categorie = Categoria::find($id);
-            if (!$categorie) {
-                $data = [
-                    'message' => 'No se pudo encontrar la categoria',
-                    'status' => 404
-                ];
-                return response()->json($data, 404);
-            } else {
-                $validator = Validator::make($request->all(), [
-                    'nombre_categoria' => 'required',
-                    'descripcion_categoria' => 'required'
-                ]);
-                if ($validator->fails()) {
-                    $data = [
-                        'message' => 'Error al validar los datos',
-                        'error' => $validator->errors(),
-                        'status' => 400
-                    ];
-                    return response()->json($data, 400);
-                } else {
-                    $categorie->nombre_categoria = $request->nombre_categoria;
-                    $categorie->descripcion_categoria = $request->descripcion_categoria;
-                    $categorie->save();
-                    $data = [
-                        'message' => 'Categoria actualizada correctamente',
-                        'categorie' => $categorie,
-                        'status' => 200
-                    ];
-                    return response()->json($data, 200);
-                }
-            }
+            $categorie = Categoria::findOrFail($id);
+            $request->validate([
+                'nombre_categoria' => 'required|string|unique:categorias',
+                'descripcion_categoria' => 'required|string'
+            ]);
+            $categorie->update($request->all());
+            return ApiResponse::success('Categoria actualizada con exito', 200, $categorie);
+        } catch (ModelNotFoundException $me) {
+            return ApiResponse::error('Categoria no encontrada', 404, $me->getMessage());
+        } catch (ValidationException $ve) {
+            return ApiResponse::error('Error de validacion', 422, $ve->getMessage());
         } catch (Exception $e) {
-            $data = [
-                'message' => 'Ocurrio un error al momento de actualizar',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ];
-            return response()->json($data, 500);
+            return ApiResponse::error('Error al actualizar la categoria', 500, $e->getMessage());
         }
     }
 }

@@ -8,11 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Marca extends Model
 {
     use HasFactory;
+    protected $keyType = 'int'; // Tipo de la llave primaria
 
     protected $fillabel=[
-        'nombre_marca'
+        'id_marca',
+        'marca'
     ];
-    public function modelo()
+    public $timestamps = false; // Deshabilita las marcas de tiempo
+
+public function modelo()//Referencia a que tendra una relacion con la tabla de modelo
     {
         return $this->hasMany(Modelo::class);
     }

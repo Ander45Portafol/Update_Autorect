@@ -14,7 +14,7 @@ export function CategoryTable({ category, mess, acmodal, acSetModal, acdata }) {
     }
 
     return (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg overflow-y-auto h-3/5">
+        <div className="tables relative overflow-x-auto shadow-md sm:rounded-lg overflow-y-auto h-3/5">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-base text-gray-800 bg-gray-300">
                     <tr>

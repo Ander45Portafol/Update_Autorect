@@ -45,7 +45,7 @@ export function Category() {
                 </div>
                 <div className="w-full mt-4 h-14 px-8">
                     <div className="filters flex">
-                        <button className="w-36 filter_active pb-2">All categories <span className="rounded-full p-1 ml-1 bg-gray-900 text-white text-xs">11</span></button>
+                        <button className="w-36 filter_active pb-2">All categories <span className="rounded-full p-1 ml-1 bg-gray-900 text-white text-xs">{data.length}</span></button>
                     </div>
                 </div>
                 <div className="w-full h-full px-8">

@@ -62,7 +62,8 @@ export function CategoryForm({ setCategories, state_modal, idCategoria }) {
                 })
                 close_modal()
                 setData(dataForm)
-                setCategories(prevCategories => [...prevCategories, result.categoria]); // Assuming the response includes the new category
+                
+                setCategories(prevCategories => [...prevCategories, result.data]); // Assuming the response includes the new category
                 e.target.reset()
             }
         } catch (error) {
