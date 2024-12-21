@@ -21,7 +21,8 @@ class Empleado extends Model
         'fecha_nac_empleado',
         'carne_empleado',
         'tipo_documento',
-        'numero_documento'
+        'numero_documento',
+        'tipo_empleado'
     ];
     public $timestamps = false;
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CategoriaRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class CategoriaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,5 +27,24 @@ class CategoriaRequest extends FormRequest
             'nombre_categoria'=>'required|string',
             'descripcion_categoria'=>'required|string'
         ];
+    }
+
+    public function messages(){
+        return[
+            'nombre_categoria.required'=>'El nombre de la categoria es obligatorio.',
+            'nombre_categoria.string'=>'Solo se permite una cadena de texto.',
+            'descripcion_categoria.required'=>'Es obligatoria una descripcion de la categoria.',
+            'descripcion_categoria.string'=>'Solo se permite una cadena de texto.'
+        ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'exito' => false,
+                'mensaje' => 'Errores de validación.',
+                'errores' => $validator->errors(),
+            ], 422)
+        );
     }
 }

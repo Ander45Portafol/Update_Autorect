@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Empleado;
 use App\Models\Usuario;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class UsuarioController extends Controller
 {
@@ -18,85 +21,76 @@ class UsuarioController extends Controller
     {
         try {
             $user = Usuario::orderBy("nombre_usuario")->get();
-            return ApiResponse::success('Succes', 200, UsuarioResource::collection($user));
-        } catch (Exception $e) {
-            return ApiResponse::error('Error', 500, $e->getMessage());
+            if ($user->isEmpty()) {
+                $message = [
+                    'message' => 'Users don´t exists'
+                ];
+                return response()->json($message);
+            }
+            return ApiResponse::success('Success', 200, UsuarioResource::collection($user));
+        } catch (Throwable $to) {
+            return ApiResponse::error('Error', 500, $to->getMessage());
         }
     }
-    public function store(Request $request)
+    /**
+     * Almacenar un nuevo usuario.
+     *
+     * @param UserRequest $request  La solicitud HTTP validada.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(UserRequest $request): JsonResponse
     {
         $empleado = Empleado::find($request->id_empleado);
 
         if ($empleado) {
             try {
-                $request->validate([
-                    'nombre_usuario' => 'required|string|unique:usuarios,nombre_usuario',
-                    'clave_usuario' => 'required|string',
-                    'id_empleado' => 'required|unique:usuarios,id_empleado',
-                    'tipo_usuario' => 'required|string',
-                    'estado_usuario' => 'required|string'
-                    // otros campos que necesites
-                ]);
-                $usuario = Usuario::create([
-                    'nombre_usuario' => $request->nombre_usuario,
-                    'clave_usuario' => $request->clave_usuario,
-                    'id_empleado' => $request->id_empleado,
-                    'tipo_usuario' => $request->tipo_usuario,
-                    'estado_usuario' => $request->estado_usuario
-                ]);
-                return (new UsuarioResource($usuario))->additional(['message' => 'Usuario creado con exito']);
+                $validated = $request->validated();
+                $datos = array_merge($validated);
+                $usuario = Usuario::create($datos);
+                return ApiResponse::success('User was create with success',200,new UsuarioResource($usuario));
             } catch (Exception $e) {
-                return ApiResponse::error('Error al crear al usuario', '500', $e->getMessage());
+                return ApiResponse::error('Error to create a user', 500, $e->getMessage());
             }
         } else {
-            return response()->json(['error' => 'Empleado no encontrado'], 404);
+            return response()->json(['error' => 'Employee wasn´t find'], 404);
         }
     }
-    public function show($id)
+
+    public function show($id):JsonResponse
     {
         try {
             $user = Usuario::findOrFail($id);
-            return ApiResponse::success('Usuario obtenido correctamente', 200, data: $user);
+            return ApiResponse::success('User data was get', 200, data: new UsuarioResource($user));
         } catch (ModelNotFoundException $me) {
-            return ApiResponse::error('Error al buscar el usuario', 404, $me->getMessage());
+            return ApiResponse::error('Error to looking for user', 404, $me->getMessage());
         }
     }
-    public function update($id, Request $request)
+    public function update($id, UserRequest $request):JsonResponse
     {
-
         try {
             $users = Usuario::findOrFail($id);
-            $empleado = Empleado::find($request->id_empleado);
-            if ($empleado) {
-                $request->validate([
-                    'nombre_usuario' => 'required|string|unique:usuarios,nombre_usuario',
-                    'clave_usuario' => 'required|string',
-                    'id_empleado' => 'required',
-                    'tipo_usuario' => 'required|string',
-                    'estado_usuario' => 'required|string'
-                ]);
-                $users->update($request->all());
-                return ApiResponse::success('Usuario actualizado con exito', 200, $users);
-            } else {
-                return ApiResponse::error('Empleado no encontrado', 404);
-            }
+            $validated = $request->validated();
+            $datos = array_merge($validated);
+            $users->update($datos);
+            return ApiResponse::success('User was updated', 200, $users);
         } catch (ModelNotFoundException $me) {
-            return ApiResponse::error('Usuario no encontrado', 404, $me->getMessage());
+            return ApiResponse::error('User wasn´t find', 404, $me->getMessage());
         } catch (ValidationException $ve) {
-            return ApiResponse::error('Error en validaciones', 422, $ve->getMessage());
+            return ApiResponse::error('Error to data validated', 422, $ve->getMessage());
         } catch (Exception $e) {
-            return ApiResponse::error('Error al actualizar el usuario', 500, $e->getMessage());
+            return ApiResponse::error('Error to update the user', 500, $e->getMessage());
         }
     }
-    public function destroy($id){
-        try{
-            $user=Usuario::findOrFail($id);
+    public function destroy($id):JsonResponse
+    {
+        try {
+            $user = Usuario::findOrFail($id);
             $user->delete();
-            return ApiResponse::success('Usuario eliminado correctamente',200);
-        }catch(ModelNotFoundException $me){
-            return ApiResponse::error('El usuario seleccionado no existe',404,$me->getMessage());
-        }catch(Exception $e){
-            return ApiResponse::error('Error al eliminar al usuario',500,$e->getMessage());
+            return ApiResponse::success('User was deleted', 200);
+        } catch (ModelNotFoundException $me) {
+            return ApiResponse::error( 'User wasn´t find', 404, $me->getMessage());
+        } catch (Exception $e) {
+            return ApiResponse::error('Error to deleted the user', 500, $e->getMessage());
         }
     }
 }

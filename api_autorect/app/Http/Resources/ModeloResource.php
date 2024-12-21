@@ -14,6 +14,10 @@ class ModeloResource extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id_modelo'=>$this->id_modelo,
+            'nombre_modelo'=>$this->nombre_modelo,
+            'id_marca'=>$this->id_marca
+        ];
     }
 }
