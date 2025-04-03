@@ -22,7 +22,7 @@ class Empleado extends Model
         'carne_empleado',
         'tipo_documento',
         'numero_documento',
-        'tipo_empleado'
+        'area_trabajo'
     ];
     public $timestamps = false;
 

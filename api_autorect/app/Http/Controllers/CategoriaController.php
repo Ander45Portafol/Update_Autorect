@@ -5,13 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoriaRequest;
 use App\Http\Resources\CategoriaResource;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Http\Request;
 use App\Models\Categoria;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 

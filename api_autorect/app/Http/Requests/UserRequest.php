@@ -28,7 +28,6 @@ class UserRequest extends FormRequest
                 'nombre_usuario' => 'required|string|unique:usuarios,nombre_usuario',
                 'clave_usuario' => 'required|string',
                 'id_empleado' => 'required|integer|unique:usuarios,id_empleado',
-                'tipo_usuario' => 'required|string',
                 'estado_usuario' => 'required|string'
             ];
         }
@@ -54,8 +53,6 @@ class UserRequest extends FormRequest
             'id_empleado.required' => 'El campo del empleado es obligatorio',
             'id_empleado.unique' => 'Este empleado ya existe en un registro',
             'id_empleado.integer' => 'El identificar del empleado debe ser de caracter numérico',
-            'tipo_usuario.required' => 'Escoge un tipo de usuario',
-            'tipo_usuario.string' => 'El tipo de usuario debe de ser una cadena de texto',
             'estado_usuario.required' => 'Escoge un estado para el usuario',
             'estado_usuario.string' => 'El estado de un usuario debe de ser una cadena de texto'
         ];

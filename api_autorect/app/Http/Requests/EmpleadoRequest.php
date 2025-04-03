@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class EmpleadoRequest extends FormRequest
 {
@@ -29,10 +31,9 @@ class EmpleadoRequest extends FormRequest
             'estado_empleado'=>'required|in:Vacaciones,Incapacidad,Suspendido,Transladado,Trabajando,Descanso',
             'telefono_empleado'=>'regex:/^\d{4}-\d{4}$/',
             'fecha_nac_empleado'=>'required|date',
-            'carne_empleado'=>'required|string',
-            'tipo_documento'=>'required|in:Pasaporte,DUI,NIT',
+            'tipo_documento'=>'required|in:Pasaporte,DUI',
             'numero_documento'=>'required|string',
-            'tipo_empleado'=>'required|in:Root,Administración,Ventas,Super,Gerente,Supervisor'
+            'area_trabajo'=>'required|in:Root,Administración,Ventas,Sistemas,Gerente,Supervisor'
         ];
     }
     public function messages(){
@@ -55,14 +56,23 @@ class EmpleadoRequest extends FormRequest
             'telefono_empleado.regex'=>'El número de telefono del empleado no cumple el formato',
             'fecha_nac_emppleado.required'=>'La fecha de nacimiento es requerida',
             'fecha_nac_empleado.date'=>'La fecha de nacimiento no cumple con el formato correcto',
-            'carne_empleado.required'=>'El carne del empleado es requerido',
             'carne_empleado.string'=>'El carne del empleado debe ser una cadena de texto',
             'tipo_documento.required'=>'El tipo de documento es requerido',
             'tipo_documento.in'=>'Tipo de documento inexistente',
             'numero_documento.required'=>'El número del documento es requerido',
             'numero_documento.string'=>'El número del documento debe ser una cadena de texto',
-            'tipo_empleado.required'=>'El tipo de empleado es requerido',
-            'tipo_empleado.in'=>'Tipo de empleado inexistente'
+            'area_trabajo.required'=>'El tipo de empleado es requerido',
+            'area_trabajo.in'=>'Tipo de empleado inexistente'
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'exito' => false,
+                'mensaje' => 'Errores de validación.',
+                'errores' => $validator->errors(),
+            ], 422)
+        );
     }
 }

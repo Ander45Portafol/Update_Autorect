@@ -2,16 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductoResource;
+use App\Http\Responses\ApiResponse;
+use App\Models\Producto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Throwable;
 
 class ProductoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index():JsonResponse
     {
-        //
+        try{
+            $product=Producto::with('modelo.marca')->get();
+            if ($product->isEmpty()) {
+                $message=[
+                    'message'=>'No existen Productos'
+                ];
+                return response()->json($message);
+            }
+            return ApiResponse::success('Exito',200,ProductoResource::collection($product));
+        }catch(Throwable $to){
+            return ApiResponse::error('Error',500,$to->getMessage());
+        }
     }
 
     /**

@@ -11,8 +11,8 @@ export function useGet(url) {
             try {
                 const response = await fetch(API + url,{ method: "GET" });
                 const responseData = await response.json();
-                setData(responseData.data);
                 setMessage(responseData.message)
+                setData(responseData.data);
             } catch (error) {
                 console.log(error);
             }

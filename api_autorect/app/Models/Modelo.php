@@ -24,4 +24,8 @@ class Modelo extends Model
     {
         return $this->belongsTo(Marca::class);
     }
+    public function producto()//Referencia a que tendra una relacion con la tabla de modelo
+    {
+        return $this->hasMany(Producto::class);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UsuarioResource;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Empleado;
 use App\Models\Usuario;
 use Exception;
@@ -17,17 +18,17 @@ use Throwable;
 class UsuarioController extends Controller
 {
     //
-    public function index()
+    public function index():JsonResponse
     {
         try {
             $user = Usuario::orderBy("nombre_usuario")->get();
             if ($user->isEmpty()) {
                 $message = [
-                    'message' => 'Users don´t exists'
+                    'message' => 'No existen usuarios'
                 ];
                 return response()->json($message);
             }
-            return ApiResponse::success('Success', 200, UsuarioResource::collection($user));
+            return ApiResponse::success('¡Exito!', 200, UsuarioResource::collection($user));
         } catch (Throwable $to) {
             return ApiResponse::error('Error', 500, $to->getMessage());
         }
@@ -45,9 +46,10 @@ class UsuarioController extends Controller
         if ($empleado) {
             try {
                 $validated = $request->validated();
+                $validated['clave_usuario'] = Hash::make($validated['nombre_usuario'+'123']);
                 $datos = array_merge($validated);
                 $usuario = Usuario::create($datos);
-                return ApiResponse::success('User was create with success',200,new UsuarioResource($usuario));
+                return ApiResponse::success('¡Usuario creado con exito!',200,new UsuarioResource($usuario));
             } catch (Exception $e) {
                 return ApiResponse::error('Error to create a user', 500, $e->getMessage());
             }
@@ -92,5 +94,9 @@ class UsuarioController extends Controller
         } catch (Exception $e) {
             return ApiResponse::error('Error to deleted the user', 500, $e->getMessage());
         }
+    }
+    public function hashPasword($password){
+        $password_hash=Hash::make($password);
+        return response()->json($password_hash, 200);
     }
 }
