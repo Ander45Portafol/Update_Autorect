@@ -19,8 +19,8 @@ class ProductoResource extends JsonResource
             'nombre_producto'=>$this->nombre_producto,
             'precio_producto'=>$this->precio_producto,
             'modelo'=>[
-                'nombre'=>$this->nombre_modelo,
-                'marca'=>$this->nombre_marca
+                'nombre'=>$this->modelo->nombre_modelo,
+                'marca'=>$this->modelo->marca->marca
             ],
             'estado_producto'=>$this->estado_producto
         ];

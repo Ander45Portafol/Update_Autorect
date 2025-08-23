@@ -3,6 +3,7 @@ import { employee_columns, open_modal } from "../../../const";
 import { UpdateButton } from "../UpdateButton";
 import { DeleteButton } from "../DeleteButton";
 import { useDelete } from "../../../useDelete";
+import Swal from 'sweetalert2';
 import { ModalEmployee } from "../Modals/EmployeeModal";
 import { useModal } from "../../../assets/modalScript";
 
@@ -39,7 +40,7 @@ export function EmployeeTable({ employees, mess, setEmployee }) {
         })
     }
     return (
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div className="relative h-3/4 overflow-x-auto shadow-md sm:rounded-lg overflow-y-scroll">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-base text-gray-800 bg-gray-300">
                     <tr>
@@ -55,7 +56,7 @@ export function EmployeeTable({ employees, mess, setEmployee }) {
                             employees.map(employee => (
                                 <tr className="bg-white border-b text-center text-sm font-bold dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" key={employee.id_empleado}>
                                     <td className="px-6 py-4">
-                                        {employee.id_empleado}
+                                        {employee.carne_empleado}
                                     </td>
                                     <td className="px-6 py-4 ">
                                         {employee.apellido_empleado}
@@ -63,7 +64,7 @@ export function EmployeeTable({ employees, mess, setEmployee }) {
                                     <td className="px-6 py-4">
                                         {employee.nombre_empleado}
                                     </td>
-                                    <td className="px-6 py-4">{employee.numero_documento}</td>
+                                    <td className="px-6 py-4">{employee.correo_empleado}</td>
                                     <td className="px-6 py-4">
                                         <p className="bg-green-700 text-white rounded-lg flex items-center justify-center h-10">{employee.estado_empleado}</p>
                                     </td>
@@ -73,7 +74,7 @@ export function EmployeeTable({ employees, mess, setEmployee }) {
                                     <td className="px-6 py-4">
                                         <div className="flex justify-center">
                                             <UpdateButton click={() => update(employee.id_empleado)} />
-                                            <DeleteButton deleteFunction={() => delete_function()} />
+                                            <DeleteButton deleteFunction={() => delete_function(employee.id_empleado)} />
                                         </div>
                                     </td>
                                 </tr>

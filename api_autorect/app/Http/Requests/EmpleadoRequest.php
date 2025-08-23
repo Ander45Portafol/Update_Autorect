@@ -31,6 +31,7 @@ class EmpleadoRequest extends FormRequest
             'estado_empleado'=>'required|in:Vacaciones,Incapacidad,Suspendido,Transladado,Trabajando,Descanso',
             'telefono_empleado'=>'regex:/^\d{4}-\d{4}$/',
             'fecha_nac_empleado'=>'required|date',
+            'carne_empleado'=>'string',
             'tipo_documento'=>'required|in:Pasaporte,DUI',
             'numero_documento'=>'required|string',
             'area_trabajo'=>'required|in:Root,Administración,Ventas,Sistemas,Gerente,Supervisor'

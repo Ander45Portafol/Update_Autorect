@@ -1,90 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddButton } from "../AddButton";
 import { CleanText } from "../CleanButton";
 import { InpuTransparent } from "../Input";
 import { InputDate } from "../InputDate";
 import { SelectTransparent } from "../Select";
-import Swal from 'sweetalert2';
 import { useModal } from "../../../assets/modalScript";
-import { API,close_modal } from "../../../const";
+import { useEmployeeForm } from "../../../assets/useEmployeeForm";
 
 export function EmployeeForm({ setEmployees, idEmpleado }) {
+    //Manejador del estado del modal, se utiliza para capturarla como parametro para el hook del form
     const modalState = useModal((state) => state.modalState)
-    const setModalState = useModal((state) => state.setModalState)
+    //Utilizo un hook personalizado para llevar el control de todas las acciones que realiza el formulario
+    const { data, setData, handleSubmit } = useEmployeeForm(modalState, idEmpleado, setEmployees);
+
     const select_job = ['Sistemas', 'Administración', 'Ventas', 'Gerente', 'Supervisor']
     const estado_empleado = ['Vacaciones', 'Incapacidad', 'Suspendido', 'Transladado', 'Trabajando', 'Descanso']
     const tipo_documento = ['DUI', 'Pasaporte']
 
-    const dataForm = {
-        id_empleado: '',
-        nombre_empleado: '',
-        apellido_empleado: '',
-        correo_empleado: '',
-        direccion_empleado: '',
-        estado_empleado: '',
-        telefono_empleado: '',
-        fecha_nac_empleado: '',
-        carne_empleado: '',
-        tipo_documento: '',
-        numero_documento: '',
-        area_trabajo: ''
-    }
-
-    const [data, setData] = useState(dataForm)
-
-    const createData = async (e) => {
-        const data = {
-            nombre_empleado: e.target.nombre_empleado.value,
-            apellido_empleado: e.target.apellido_empleado.value,
-            correo_empleado: e.target.correo_empleado.value,
-            direccion_empleado: e.target.direccion_empleado.value,
-            estado_empleado: e.target.estado_empleado.value,
-            telefono_empleado: e.target.telefono_empleado.value,
-            fecha_nac_empleado: e.target.fecha_nac_empleado.value,
-            carne_empleado: null,
-            tipo_documento: e.target.tipo_documento.value,
-            numero_documento: e.target.numero_documento.value,
-            area_trabajo: e.target.area_trabajo.value,
-        }
-        console.log(data)
-        try {
-            const response = await fetch(API + 'empleados', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) })
-            if (response.ok) {
-                const result = await response.json()
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    title: result.message,
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 3000
-                })
-                close_modal()
-                setData(dataForm)
-
-                setEmployees(prevEmployees => [...prevEmployees, result.data]); // Assuming the response includes the new category
-                e.target.reset()
-            }
-        } catch (error) {
-            console.log(error)
-            Swal.fire({
-                title: "Ocurrio un problema",
-                text:error,
-                icon: 'Error',
-                showConfirmButton: false,
-                timer: 3000
-            })
-        }
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (modalState == 1) {
-            createData(e)
-        } else if (modalState == 2) {
-        }
-    }
+    //En esta funcion se guardan los valores que tienen en ese momento cada input
     const inputsUpdate = (e) => {
         const { name, value } = e.target;
         setData({ ...data, [name]: value })
@@ -106,13 +39,13 @@ export function EmployeeForm({ setEmployees, idEmpleado }) {
                         <InputDate text="Fecha Nacimiento" textId={"fecha_nac_empleado"} valueData={data.fecha_nac_empleado} updateData={inputsUpdate} />
                     </div>
                     <div className="flex justify-evenly w-full mt-10">
-                        <SelectTransparent text="Area Trabajo" nameo={"area_trabajo"} data={select_job} updateData={inputsUpdate} />
-                        <SelectTransparent text="Tipo Documento" nameo={"tipo_documento"} data={tipo_documento} updateData={inputsUpdate} />
+                        <SelectTransparent text="Area Trabajo" nameo={"area_trabajo"} valuedata={data.area_trabajo} data={select_job} updateData={inputsUpdate} />
+                        <SelectTransparent text="Tipo Documento" nameo={"tipo_documento"} valuedata={data.tipo_documento} data={tipo_documento} updateData={inputsUpdate} />
                         <InpuTransparent text="Numero Documento" type="text" textId={"numero_documento"} valueData={data.numero_documento} updateData={inputsUpdate} />
                     </div>
                     <div className="flex justify-evenly w-full mt-10">
                         <div className="flex w-2/3 justify-start">
-                            <SelectTransparent text="Estado Empleado" nameo={"estado_empleado"} data={estado_empleado} updateData={inputsUpdate} />
+                            <SelectTransparent text="Estado Empleado" nameo={"estado_empleado"} valuedata={data.estado_empleado} data={estado_empleado} updateData={inputsUpdate} />
                         </div>
                         <div className="flex-col w-1/3 pl-10">
                             <AddButton text="CONFIRM" />

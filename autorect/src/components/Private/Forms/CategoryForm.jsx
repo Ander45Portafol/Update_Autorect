@@ -1,115 +1,14 @@
 import { AddButton } from "../AddButton";
 import { CleanText } from "../CleanButton";
-import { API, close_modal } from "../../../const";
-import Swal from 'sweetalert2'
-import { useEffect, useState } from "react";
 import { useModal } from "../../../assets/modalScript";
+import { useCategoryForm } from "../../../assets/useCategoryForm";
 
 
 export function CategoryForm({ setCategories, idCategoria }) {
 
     const modalState=useModal((state)=>state.modalState)
-    const setModalState=useModal((state)=>state.setModalState)
 
-    const dataForm = {
-        id: '',
-        nombre_categoria: '',
-        descripcion_categoria: ''
-    }
-
-    const [data, setData] = useState(dataForm)
-
-    const updateData = async (e, id) => {
-        const data = {
-            nombre_categoria: e.target.nombre_categoria.value,
-            descripcion_categoria: e.target.descripcion_categoria.value
-        }
-        try {
-            const response = await fetch(API + 'categorias/' + id, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) })
-            if (response.ok) {
-                const result = await response.json()
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    title: result.message,
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 3000
-                })
-                setModalState(0)
-                close_modal()
-                const dataUpdate=await fetch(API+'categorias',{method:'GET'})
-                const responseData = await dataUpdate.json();
-                setCategories(responseData.data)
-                setData(dataForm)
-                e.target.reset();
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    const createData = async (e) => {
-        const data = {
-            nombre_categoria: e.target.nombre_categoria.value,
-            descripcion_categoria: e.target.descripcion_categoria.value
-        }
-
-        try {
-            const response = await fetch(API + 'categorias', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) })
-            if (response.ok) {
-                const result = await response.json()
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    title: result.message,
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 3000
-                })
-                close_modal()
-                setData(dataForm)
-                
-                setCategories(prevCategories => [...prevCategories, result.data]); // Assuming the response includes the new category
-                e.target.reset()
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    const chargeData = async (id_categoria) => {
-        try {
-            if (id_categoria!=0) {
-                const response = await fetch(API + 'categorias/' + id_categoria, { method: "GET" })
-                if (response.ok) {
-                    const responseData = await response.json()
-                    setData({
-                        id: responseData.data.id_categoria,
-                        nombre_categoria: responseData.data.nombre_categoria,
-                        descripcion_categoria: responseData.data.descripcion_categoria
-                    })
-                }
-            }else{
-                console.log('No encuentra el id')
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    }
-    useEffect(() => {
-        if (modalState==2&&idCategoria!=null) {
-            chargeData(idCategoria)
-        }
-    },[modalState,idCategoria])
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (modalState == 1) {
-            createData(e)
-        } else if (modalState == 2) {
-            updateData(e, idCategoria)
-        }
-    }
+    const {data,setData,handleSubmit}=useCategoryForm(modalState,idCategoria, setCategories)
 
     const manejarCambio = (e) => {
         const { name, value } = e.target;

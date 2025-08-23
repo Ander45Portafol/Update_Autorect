@@ -14,6 +14,7 @@ class Modelo extends Model
     protected $fillable=[
         'id_modelo',
         'nombre_modelo',
+        'anio_modelo',
         'id_marca'
     ];
 
@@ -22,7 +23,7 @@ class Modelo extends Model
 
     public function marca()//Relacion para con la llave foranea de la tabla marca
     {
-        return $this->belongsTo(Marca::class);
+        return $this->belongsTo(Marca::class,'id_marca','id_marca');
     }
     public function producto()//Referencia a que tendra una relacion con la tabla de modelo
     {

@@ -18,7 +18,7 @@ class ModeloController extends Controller
 {
     public function index():JsonResponse{
         try{
-            $model=Modelo::orderBy("nombre_modelo")->get();
+            $model=Modelo::join('marcas','modelos.id_marca','=','marcas.id_marca')->select('modelos.*','marca')->get();
             if ($model->isEmpty()) {
                 $message = [
                     'message' => 'Models don´t exists'

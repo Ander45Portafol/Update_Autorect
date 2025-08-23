@@ -7,12 +7,12 @@ import { InputDay } from "../../components/Private/InputToDay.jsx";
 import { Sidebar } from '../../components/Private/Sidebar.jsx';
 import { useGet } from '../../useGet.js';
 import { useModal } from '../../assets/modalScript.js';
-import { useState } from 'react';
 
 
 export function Employee() {
     //Custom Hook donde se hacen los metodos Get
     const {data,message,setData}=useGet('empleados')
+    console.log(data)
     //variable para cambiar el estado del modal
     const setModalState=useModal((state)=>state.setModalState)
     //variable para contar los empleados que estan trabajando.
@@ -55,7 +55,7 @@ export function Employee() {
                         <button className="w-32 pb-2.5">Activos <span className="rounded-full p-1 ml-1 bg-gray-900 text-white text-xs">{cantidadActivos}</span></button>
                     </div>
                 </div>
-                <div className="w-full px-8">
+                <div className="w-full px-8 h-5/6">
                     <EmployeeTable employees={data} mess={message} setEmployee={setData} />
                 </div>
             </div>

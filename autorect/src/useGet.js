@@ -4,7 +4,7 @@ import { API } from "./const";
 
 export function useGet(url) {
     // const {data}=useFetch(API+'categories',{method:'GET'})
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([]);   
     const [message,setMessage]=useState(null);
     const fetchedRef = useRef(false);
         async function getData() {

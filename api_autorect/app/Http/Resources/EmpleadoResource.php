@@ -20,6 +20,8 @@ class EmpleadoResource extends JsonResource
             'apellido_empleado'=>$this->apellido_empleado,
             'telefono_empleado'=>$this->telefono_empleado,
             'numero_documento'=>$this->numero_documento,
+            'correo_empleado'=>$this->correo_empleado,
+            'carne_empleado'=>$this->carne_empleado,
             'estado_empleado'=>$this->estado_empleado,
             'area_trabajo'=>$this->area_trabajo,
         ];

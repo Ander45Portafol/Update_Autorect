@@ -3,9 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ModeloResource extends ResourceCollection
+class ModeloResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -17,7 +17,8 @@ class ModeloResource extends ResourceCollection
         return [
             'id_modelo'=>$this->id_modelo,
             'nombre_modelo'=>$this->nombre_modelo,
-            'id_marca'=>$this->id_marca
+            'anio_modelo'=>$this->anio_modelo,
+            'nombre_marca'=>$this->marca
         ];
     }
 }

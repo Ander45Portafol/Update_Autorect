@@ -2,9 +2,11 @@ import { useModal } from '../../../assets/modalScript';
 import { close_modal } from '../../../const';
 import { EmployeeForm } from '../Forms/EmployeeForm';
 
-export function ModalEmployee({newdata,id}) {
-    const modalState=useModal((state)=>state.modalState)
-    const setModalState=useModal((state)=>state.setModalState)
+export function ModalEmployee({ newdata, id }) {
+    
+    const modalState = useModal((state) => state.modalState)
+    const setModalState = useModal((state) => state.setModalState)
+    
     const close = () => {
         setModalState(0)
         close_modal()
@@ -16,7 +18,7 @@ export function ModalEmployee({newdata,id}) {
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 className="text-3xl font-bold text-red-900 dark:text-white">
-                               {modalState===1?"NUEVO EMPLEADO":(modalState==2?"MODIFICAR EMPLEADO":'CLOSE')}
+                                {modalState === 1 ? "NUEVO EMPLEADO" : (modalState == 2 ? "MODIFICAR EMPLEADO" : 'CLOSE')}
                             </h3>
                             <button type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onClick={close}>
                                 <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -25,7 +27,7 @@ export function ModalEmployee({newdata,id}) {
                                 <span className="sr-only">Close modal</span>
                             </button>
                         </div>
-                        <EmployeeForm setEmployees={newdata} idEmpleado={id}/>
+                        <EmployeeForm setEmployees={newdata} idEmpleado={id} />
                     </div>
                 </div>
             </div>

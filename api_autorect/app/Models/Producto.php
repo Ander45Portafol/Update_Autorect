@@ -24,6 +24,6 @@ class Producto extends Model
     public $timestamps = false; // Deshabilita las marcas de tiempo
     public function modelo()
     {
-        return $this->belongsTo(Marca::class, 'id_modelo');
+        return $this->belongsTo(Modelo::class, 'id_modelo');
     }
 }

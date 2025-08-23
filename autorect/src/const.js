@@ -45,3 +45,5 @@ export const open_modal = () => {
 }
 //Dirreccion api
 export const API='http://127.0.0.1:8000/api/';
+
+//Tengo que hacer una variable para mejorar los select y adaptarlo a una forma en que funcione con los datos de la api
