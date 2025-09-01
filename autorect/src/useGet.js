@@ -4,19 +4,24 @@ import { API } from "./const";
 
 export function useGet(url) {
     // const {data}=useFetch(API+'categories',{method:'GET'})
-    const [data, setData] = useState([]);   
-    const [message,setMessage]=useState(null);
+    const [data, setData] = useState([]);
+    const [message, setMessage] = useState(null);
     const fetchedRef = useRef(false);
-        async function getData() {
-            try {
-                const response = await fetch(API + url,{ method: "GET" });
-                const responseData = await response.json();
-                setMessage(responseData.message)
-                setData(responseData.data);
-            } catch (error) {
-                console.log(error);
-            }
+    async function getData() {
+        try {
+            const response = await fetch(API + url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("llave")}`
+                }
+            });
+            const responseData = await response.json();
+            setMessage(responseData.message)
+            setData(responseData.data);
+        } catch (error) {
+            console.log(error);
         }
+    }
     useEffect(() => {
         if (fetchedRef.current) return;
         fetchedRef.current = true;
@@ -26,5 +31,5 @@ export function useGet(url) {
         //   .catch((error) => setError(error))
         getData();
     }, [url]);
-  return { data,message,setData };
+    return { data, message, setData };
 }

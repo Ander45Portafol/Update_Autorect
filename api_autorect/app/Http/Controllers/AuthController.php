@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Usuario;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -19,6 +21,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+        //Esto nos ayuda para restringuir el acceso del controlador
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
@@ -32,22 +35,25 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'nombre_usuario' => 'required',
-                'clave_usuario' => 'required'
-            ]);
-                $credentials = $request->only('nombre_usuario', 'clave_usuario');
+            $data = [
+                'nombre_usuario' => $request->nombre_usuario,
+                'password' => $request->clave_usuario // 'password' es clave aquí para que tome el metodo de auth
+            ];
+            $user = Usuario::where('nombre_usuario', $data['nombre_usuario'])->first();
 
-                if (!$token = auth()->attempt($credentials)) {
-                    return response()->json(['error' => 'Unauthorized'], 401);
-                }
-                $answer = [
-                    'data' => $credentials,
-                    'token' => $token
-                ];
-                return response()->json(compact('token'));
+            if (!Hash::check($data['password'], $user->clave_usuario)) {
+                return response()->json(['error' => 'Credenciales incorrectas'], 401);
+            }
+            // Generar token JWT
+            if (!$token = auth()->attempt($data)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No se pudo generar el token'
+                ], 401);
+            }
+            return $this->respondWithToken($token);
 
-
+            //return response()->json($answer);
         } catch (Exception $e) {
             return response()->json($e);
         }
@@ -65,7 +71,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        //return $this->respondWithToken(auth()->refresh());
+        // return $this->respondWithToken(auth()->refresh());
     }
 
     /**
@@ -78,9 +84,9 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'llave_acceso' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60
+            'expires_in' => Auth::factory()->getTTL() * 60
         ]);
     }
 

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { LoginPrivate } from "./private/pages/Login";
 import 'flowbite/dist/flowbite.min.css';
 import './index.css';
@@ -12,31 +12,29 @@ import { Category } from './private/pages/Category';
 import { Model } from './private/pages/Model';
 import { Dashboard } from './private/pages/Dashboard';
 import Swal from 'sweetalert2'
+import { useEffect } from 'react';
 
 function App() {
   async function validateConnection() {
-    try{
+    try {
       const response = await fetch('http://127.0.0.1:8000/api/connection', {
         method: 'GET', // Cambia esto según el tipo de petición que necesitas
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
       if (!response.ok) {
         Swal.fire({
-            title: 'Ocurrio un problema',
-            text: 'No se puede establecer la conexión con el servidor',
-            icon: 'error',
-            showConfirmButton: false, // Desactiva el botón de confirmación
-            showCancelButton: false,  // Desactiva el botón de cancelar
-            allowOutsideClick: false, // Opcional: Evita que el usuario cierre el modal haciendo clic fuera
-            allowEscapeKey: false 
-        })
-      }else{
-
+          title: 'Ocurrio un problema',
+          text: 'No se puede establecer la conexión con el programa',
+          icon: 'error',
+          showConfirmButton: false, // Desactiva el botón de confirmación
+          showCancelButton: false,  // Desactiva el botón de cancelar
+          allowOutsideClick: false, // Opcional: Evita que el usuario cierre el modal haciendo clic fuera
+          allowEscapeKey: false
+        });
       }
-    }catch(Exception){
+    } catch (Exception) {
       Swal.fire({
         title: 'Ocurrio un problema',
         text: 'No se puede establecer la conexión con el servidor',
@@ -44,25 +42,25 @@ function App() {
         showConfirmButton: false, // Desactiva el botón de confirmación
         showCancelButton: false,  // Desactiva el botón de cancelar
         allowOutsideClick: false, // Opcional: Evita que el usuario cierre el modal haciendo clic fuera
-        allowEscapeKey: false })
+        allowEscapeKey: false
+      })
     }
-    
   }
-  validateConnection()
-  return (    
+  validateConnection();
+  return (
     <Router>
-    <Routes>
-      <Route path="/" element={<LoginPrivate />} />
-      <Route path='main' element={<Dashboard />} />
-      <Route path='user' element={<User />} />
-      <Route path='employee' element={<Employee />} />
-      <Route path='client' element={<Client />} />
-      <Route path='product' element={<Product />} />
-      <Route path='order' element={<Order />} />
-      <Route path='category' element={<Category />} />
-      <Route path='model' element={<Model />} />
-    </Routes>
-  </Router>
+      <Routes>
+        <Route path="/" element={<LoginPrivate />} />
+        <Route path='main' element={<Dashboard />} />
+        <Route path='user' element={<User />} />
+        <Route path='employee' element={(<Employee />)} />
+        <Route path='client' element={<Client />} />
+        <Route path='product' element={<Product />} />
+        <Route path='order' element={<Order />} />
+        <Route path='category' element={<Category />} />
+        <Route path='model' element={<Model />} />
+      </Routes>
+    </Router>
   )
 }
 
