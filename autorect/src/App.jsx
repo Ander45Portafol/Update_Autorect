@@ -12,7 +12,6 @@ import { Category } from './private/pages/Category';
 import { Model } from './private/pages/Model';
 import { Dashboard } from './private/pages/Dashboard';
 import Swal from 'sweetalert2'
-import { useEffect } from 'react';
 
 function App() {
   async function validateConnection() {
@@ -53,7 +52,7 @@ function App() {
         <Route path="/" element={<LoginPrivate />} />
         <Route path='main' element={<Dashboard />} />
         <Route path='user' element={<User />} />
-        <Route path='employee' element={(<Employee />)} />
+        <Route path='employee' element={<Employee />} />
         <Route path='client' element={<Client />} />
         <Route path='product' element={<Product />} />
         <Route path='order' element={<Order />} />

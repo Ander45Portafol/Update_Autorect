@@ -28,6 +28,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+    Route::resource('/empleados', EmpleadoController::class);
+    Route::resource('/usuarios', UsuarioController::class);
+
 //Ruta para obtener constraseñas encriptadas
 Route::get('/password_link/{password}', [UsuarioController::class, 'hashPasword']);
 
@@ -38,13 +41,11 @@ Route::get('/connection', [ConnectionController::class, 'validateConnection']);
 Route::middleware('jwt.auth')->group(function () {
     Route::resource('/productos', ProductoController::class);
     //Ruta para empleados
-    Route::resource('/empleados', EmpleadoController::class);
     //Ruta para crear el carnet
     Route::get('/empleado/carnet/{nombre}', [EmpleadoController::class, 'createCarne']);
     //Ruta para categorias
     Route::resource('/categorias', CategoriaController::class);
     //Ruta para usuarios
-    Route::resource('/usuarios', UsuarioController::class);
     //Route::post('/empleado', [EmpleadoController::class, 'store']);
     //Ruta para marcas
     Route::resource('/marcas', MarcaController::class);

@@ -1,0 +1,19 @@
+services:
+  laravel:
+    build:
+      context: ./api_autorect
+    container_name: api_autorect
+    working_dir: /var/www
+    volumes:
+      - ./api_autorect:/var/www
+    ports:
+      - "8000:8000"
+  react:
+    build:
+      context: ./autorect
+    container_name: view_autorect
+    working_dir: /usr/src/app
+    volumes:
+      - ./autorect:/usr/src/app
+    ports:
+      - "5173:5173"
